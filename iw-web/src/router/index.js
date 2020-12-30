@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { setItem } from '@/utils/localStorage';
+import { setItem, getItem } from '@/utils/localStorage';
+import store from '@/store/index.js';
 Vue.use(VueRouter);
-
 const routes = [
   {
     path: '/',
@@ -19,7 +19,24 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-router.beforeEach((to, from, next)=> {
+// 忽略登录的路径
+const IgnoreLoginPaths = [
+	'/login',
+	'/register',
+	'/forget'
+];
 
+/**
+ * @param path 页面路由路径
+ * @returns {boolean} true or false
+ */
+let needLogin = path => !IgnoreLoginPaths.includes(path);
+
+router.beforeEach((to, from, next)=> {
+  if(!getItem('isLogin') && needLogin(to.path)) {
+    next({path: '/login'});
+    return;
+  }
+  next();
 });
 export default router;

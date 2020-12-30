@@ -24,7 +24,7 @@
           <el-checkbox v-model="isSaveLoginStatus">记住密码</el-checkbox>
           <el-link :underline="false" style="float:right;">忘记密码?</el-link>
         </div>
-        <el-button type="primary" class="user-btn">登录</el-button>
+        <el-button type="primary" class="user-btn" @click="login">登录</el-button>
       </template>
       <!-- 注册 -->
       <template v-if="showType==='register'">
@@ -53,7 +53,7 @@
 
 <script>
 import { Vue,Component } from 'vue-property-decorator';
-
+import { login } from '@/api/user';
 @Component({
   name: 'login'
 })
@@ -64,7 +64,12 @@ export default class extends Vue {
     password: ''
   }
   isSaveLoginStatus = false; // 是否记住密码
-
+  login() {
+    login(this.loginForm).then((data)=> {
+      this.$store.commit('setIsLogin', true);
+      this.$router.push({path: '/'})
+    });
+  }
   //* ======================= 注册状态 =======================
   register = {
     email: '',
